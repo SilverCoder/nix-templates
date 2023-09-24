@@ -36,17 +36,17 @@
           };
 
           devShells.default = with pkgs; mkShell rec {
-            androidDeps = [
+            androidPackages = [
               android-sdk
               gradle
               jdk17
             ];
 
-            flutterDeps = [
+            flutterPackages = [
               flutter
             ];
 
-            packages = androidDeps ++ flutterDeps;
+            packages = androidPackages ++ flutterPackages;
 
             ANDROID_HOME = "${android-sdk}/share/android-sdk";
             ANDROID_SDK_ROOT = "${ANDROID_HOME}";
