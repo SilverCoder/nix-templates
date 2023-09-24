@@ -7,6 +7,10 @@
         path = ./bevy;
         description = "Bevy template";
       };
+      node = {
+        path = ./node;
+        description = "Node.js template";
+      };
     };
   };
 }
