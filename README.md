@@ -25,6 +25,8 @@ nix flake init --template github:SilverCoder/nix-templates#bevy
 ## Templates
 
 - bevy ([Bevy engine](https://bevyengine.org/))
+- flutter ([Flutter](https://flutter.dev/))
+- node ([Node.js](https://nodejs.org))
 
 ## Contributing and Reporting Issues
 
