@@ -18,6 +18,7 @@
 
             config.allowUnfree = true;
           };
+
           rust = with pkgs; rust-bin.stable.latest.default.override {
             extensions = [ "rust-analyzer" "rust-src" "rustfmt" ];
             targets = [
@@ -28,6 +29,7 @@
 
           libraries = with pkgs; [
             alsa-lib
+            alsa-plugins
             udev
             vulkan-loader
             xorg.libX11
@@ -44,6 +46,7 @@
               trunk
             ] ++ libraries;
 
+            ALSA_PLUGIN_DIR = "${pkgs.alsa-plugins}/lib/alsa-lib";
             LD_LIBRARY_PATH = lib.makeLibraryPath libraries;
           };
         });
