@@ -3,6 +3,10 @@
 
   outputs = { self }: {
     templates = {
+      bare = {
+        path = ./bare;
+        description = "Bare template";
+      };
       bevy = {
         path = ./bevy;
         description = "Bevy template";
