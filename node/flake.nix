@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -10,7 +10,7 @@
         let
           overlays = [
             (self: super: {
-              nodejs = super.nodejs-18_x;
+              nodejs = super.nodejs_20;
             })
           ];
           pkgs = import nixpkgs {
