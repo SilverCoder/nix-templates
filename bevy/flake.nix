@@ -30,6 +30,7 @@
           libraries = with pkgs; [
             alsa-lib
             alsa-plugins
+            libxkbcommon
             udev
             vulkan-loader
             xorg.libX11

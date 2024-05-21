@@ -1,67 +1,44 @@
 {
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:nixos/nixpkgs";
     android.url = "github:tadfisher/android-nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, android, ... }:
+  outputs = { self, nixpkgs, flake-utils, android, rust-overlay, ... }:
     flake-utils.lib.eachDefaultSystem
       (system:
         let
           overlays = [
+            (import rust-overlay)
             (final: prev: {
-              inherit (self.packages.${final.system}) android-sdk;
+              inherit (self.packages.${final.system}) android-sdk rust-sdk;
             })
           ];
+
           pkgs = import nixpkgs {
             inherit overlays system;
 
-            config = {
-              allowUnfree = true;
-              android_sdk.accept_license = true;
-            };
+            config.allowUnfree = true;
+            android_sdk.accept_license = true;
           };
+
+          android-module = import ./nix/android.nix { inherit system pkgs android; };
+          rust-module = import ./nix/rust.nix { inherit pkgs; };
         in
         {
-          packages = {
-            android-sdk = android.sdk.${system} (sdkPkgs: with sdkPkgs; [
-              build-tools-33-0-1
-              cmdline-tools-latest
-              patcher-v4
-              platforms-android-33
-              platform-tools
+          packages = (android-module.packages // rust-module.packages);
 
-            ]);
-          };
-
-          devShells.default = with pkgs; mkShell rec {
-            androidPackages = [
-              android-sdk
-              gradle
-              jdk17
-            ];
-
-            flutterPackages = [
-              flutter
-            ];
-
-            packages = androidPackages ++ flutterPackages;
-
-            ANDROID_HOME = "${android-sdk}/share/android-sdk";
-            ANDROID_SDK_ROOT = "${ANDROID_HOME}";
-            JAVA_HOME = jdk17.home;
-            GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${android-sdk}/share/android-sdk/build-tools/33.0.2/aapt2";
-            CHROME_EXECUTABLE = "${google-chrome}/bin/google-chrome-stable";
-
-            NIX_LD_LIBRARY_PATH = lib.makeLibraryPath ([
-              stdenv.cc.cc.lib
-            ]);
-            NIX_LD = "${pkgs.stdenv.cc.libc_bin}/bin/ld.so";
-            LD_LIBRARY_PATH = NIX_LD_LIBRARY_PATH;
-
-            shellHook = ''
-              export PATH="$HOME/.pub-cache/bin:$PATH"
-            '';
-          };
+          devShells =
+            let
+              dev = import ./nix/dev.nix { inherit pkgs android-module; };
+            in
+            {
+              default = dev.shells.default;
+            };
         });
 }
