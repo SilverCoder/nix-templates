@@ -19,6 +19,10 @@
         path = ./node;
         description = "Node.js template";
       };
+      tauri = {
+        path = "./tauri";
+        description = "Tauri template";
+      };
     };
   };
 }
