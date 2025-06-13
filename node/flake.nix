@@ -8,11 +8,7 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let
-          overlays = [
-            (self: super: {
-              nodejs = super.nodejs_20;
-            })
-          ];
+          overlays = [ ];
           pkgs = import nixpkgs {
             inherit overlays system;
 
